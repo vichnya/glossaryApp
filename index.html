@@ -4,21 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Электронный глоссарий</title>
-
 <style>
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     background: #f4f6f9;
 }
-
 header {
     background: #2c3e50;
     color: white;
     padding: 20px;
     text-align: center;
 }
-
 .container {
     display: flex;
     gap: 20px;
@@ -26,10 +23,8 @@ header {
     max-width: 1300px;
     margin: 20px auto;
 }
-
 .left { flex: 3; }
 .right { flex: 1; padding-left: 20px; }
-
 .card {
     background: white;
     padding: 20px;
@@ -37,7 +32,6 @@ header {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
-
 input, textarea {
     width: 100%;
     padding: 8px;
@@ -45,7 +39,6 @@ input, textarea {
     border-radius: 4px;
     border: 1px solid #ccc;
 }
-
 button {
     padding: 8px 15px;
     background: #3498db;
@@ -54,16 +47,11 @@ button {
     border-radius: 4px;
     cursor: pointer;
 }
-
-button:hover {
-    background: #2980b9;
-}
-
+button:hover { background: #2980b9; }
 .alphabet {
     margin-bottom: 15px;
     text-align: center;
 }
-
 .alphabet span {
     margin: 3px;
     cursor: pointer;
@@ -71,18 +59,14 @@ button:hover {
     padding: 4px 6px;
     border-radius: 4px;
 }
-
 .alphabet span:hover {
     background: #3498db;
     color: white;
 }
-
-/* ВЕРТИКАЛЬНОЕ распределение */
 .columns {
     column-count: 3;
     column-gap: 20px;
 }
-
 .term-item {
     background: #ecf0f1;
     padding: 8px;
@@ -92,11 +76,7 @@ button:hover {
     break-inside: avoid;
     text-align: center;
 }
-
-.term-item:hover {
-    background: #d0e6f7;
-}
-
+.term-item:hover { background: #d0e6f7; }
 .modal {
     display: none;
     position: fixed;
@@ -104,7 +84,6 @@ button:hover {
     width: 100%; height: 100%;
     background: rgba(0,0,0,0.5);
 }
-
 .modal-content {
     background: white;
     padding: 20px;
@@ -113,7 +92,6 @@ button:hover {
     border-radius: 8px;
     position: relative;
 }
-
 .close {
     position: absolute;
     right: 15px;
@@ -121,18 +99,13 @@ button:hover {
     cursor: pointer;
     font-size: 20px;
 }
-
 .delete-btn {
     background: #e74c3c;
     margin-top: 15px;
 }
-
-.delete-btn:hover {
-    background: #c0392b;
-}
+.delete-btn:hover { background: #c0392b; }
 </style>
 </head>
-
 <body>
 
 <header>
@@ -166,13 +139,6 @@ button:hover {
 <input type="text" id="keywords" placeholder="Ключевые слова (до 3 через запятую)">
 <button onclick="addTerm()">Добавить</button>
 </div>
-
-<div class="card">
-<h2>Сохранение / Загрузка</h2>
-<button onclick="downloadGlossary()">💾 Скачать глоссарий</button>
-<input type="file" id="uploadFile" accept=".json">
-<button onclick="uploadGlossary()">📂 Загрузить глоссарий</button>
-</div>
 </div>
 
 </div>
@@ -191,11 +157,21 @@ button:hover {
 let glossary = [];
 let currentTermIndex = null;
 
-// Попытка загрузить glossary.json при старте
-fetch('glossary.json')
+// Ссылка на raw JSON на GitHub
+const rawGithubURL = "https://raw.githubusercontent.com/<ваш-аккаунт>/<репозиторий>/main/glossary.json";
+
+// Подгружаем данные с GitHub
+fetch(rawGithubURL)
   .then(res => res.json())
-  .then(data => { glossary = data; saveAndRender(); })
-  .catch(()=>{ glossary = []; saveAndRender(); });
+  .then(data => {
+      glossary = data;
+      saveAndRender();
+  })
+  .catch(err => {
+      console.error("Ошибка загрузки глоссария:", err);
+      glossary = [];
+      saveAndRender();
+  });
 
 const alphabetRu = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЭЮЯ".split("");
 const alphabetEn = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -216,10 +192,10 @@ function addTerm() {
     const title = document.getElementById("title").value.trim();
     const description = document.getElementById("description").value.trim();
     let keywords = document.getElementById("keywords").value
-        .split(",").map(k => k.trim()).filter(k=>k!=="");
+        .split(",").map(k=>k.trim()).filter(k=>k!=="");
 
-    if(!title || !description){ alert("Заполните название и описание"); return;}
-    if(keywords.length>3){ alert("Не более 3 ключевых слов"); return;}
+    if(!title || !description){ alert("Заполните название и описание"); return; }
+    if(keywords.length>3){ alert("Не более 3 ключевых слов"); return; }
 
     glossary.push({title, description, keywords});
     saveAndRender();
@@ -229,93 +205,60 @@ function addTerm() {
     document.getElementById("keywords").value="";
 }
 
-function saveAndRender(){
+function saveAndRender() {
     glossary.sort((a,b)=>a.title.localeCompare(b.title,"ru"));
     renderTerms(glossary);
 }
 
-function renderTerms(list){
-    const container=document.getElementById("termList");
-    container.innerHTML="";
+function renderTerms(list) {
+    const container = document.getElementById("termList");
+    container.innerHTML = "";
     list.forEach((term,index)=>{
-        const div=document.createElement("div");
-        div.className="term-item";
-        div.textContent=term.title;
-        div.onclick=()=>showTerm(index);
+        const div = document.createElement("div");
+        div.className = "term-item";
+        div.textContent = term.title;
+        div.onclick = ()=>showTerm(index);
         container.appendChild(div);
     });
 }
 
-function showTerm(index){
-    currentTermIndex=index;
-    const term=glossary[index];
-    document.getElementById("modalTitle").textContent=term.title;
-    document.getElementById("modalDescription").textContent=term.description;
-    document.getElementById("modalKeywords").textContent=term.keywords.join(", ");
-    document.getElementById("modal").style.display="block";
+function showTerm(index) {
+    currentTermIndex = index;
+    const term = glossary[index];
+    document.getElementById("modalTitle").textContent = term.title;
+    document.getElementById("modalDescription").textContent = term.description;
+    document.getElementById("modalKeywords").textContent = term.keywords.join(", ");
+    document.getElementById("modal").style.display = "block";
 }
 
-function closeModal(){
-    document.getElementById("modal").style.display="none";
+function closeModal() {
+    document.getElementById("modal").style.display = "none";
 }
 
-function deleteTerm(){
-    if(confirm("Удалить термин?")){
+function deleteTerm() {
+    if(confirm("Удалить термин?")) {
         glossary.splice(currentTermIndex,1);
         saveAndRender();
         closeModal();
     }
 }
 
-function searchTerm(){
-    const query=document.getElementById("searchInput").value.toLowerCase().trim();
-    const filtered=glossary.filter(term=>
-        term.title.toLowerCase().includes(query)||
-        term.description.toLowerCase().includes(query)||
+function searchTerm() {
+    const query = document.getElementById("searchInput").value.toLowerCase().trim();
+    const filtered = glossary.filter(term =>
+        term.title.toLowerCase().includes(query) ||
+        term.description.toLowerCase().includes(query) ||
         term.keywords.some(k=>k.toLowerCase().includes(query))
     );
     renderTerms(filtered);
 }
 
-function filterByLetter(letter){
-    const filtered=glossary.filter(term=>term.title.toUpperCase().startsWith(letter));
+function filterByLetter(letter) {
+    const filtered = glossary.filter(term=>term.title.toUpperCase().startsWith(letter));
     renderTerms(filtered);
 }
 
-function resetView(){ renderTerms(glossary); }
-
-// Скачивание JSON файла
-function downloadGlossary(){
-    const data=JSON.stringify(glossary,null,2);
-    const blob=new Blob([data],{type:"application/json"});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement("a");
-    a.href=url;
-    a.download="glossary.json";
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-// Загрузка JSON файла
-function uploadGlossary(){
-    const fileInput=document.getElementById("uploadFile");
-    if(fileInput.files.length===0){ alert("Выберите файл JSON для загрузки"); return; }
-    const file=fileInput.files[0];
-    const reader=new FileReader();
-    reader.onload=function(e){
-        try{
-            const imported=JSON.parse(e.target.result);
-            if(Array.isArray(imported)){
-                glossary=imported;
-                saveAndRender();
-                alert("Глоссарий успешно загружен!");
-            }else{ alert("Неверный формат файла"); }
-        }catch{
-            alert("Ошибка при чтении файла");
-        }
-    };
-    reader.readAsText(file);
-}
+function resetView() { renderTerms(glossary); }
 
 renderAlphabet();
 saveAndRender();
