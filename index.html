@@ -5,173 +5,73 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Электронный глоссарий</title>
 <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #f4f6f9;
-}
-header {
-    background: #2c3e50;
-    color: white;
-    padding: 20px;
-    text-align: center;
-}
-.container {
-    display: flex;
-    gap: 20px;
-    width: 95%;
-    max-width: 1300px;
-    margin: 20px auto;
-}
-.left { flex: 3; }
-.right { flex: 1; padding-left: 20px; }
-.card {
-    background: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-input, textarea {
-    width: 100%;
-    padding: 8px;
-    margin: 8px 0;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-button {
-    padding: 8px 15px;
-    background: #3498db;
-    border: none;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-}
-button:hover { background: #2980b9; }
-.alphabet {
-    margin-bottom: 15px;
-    text-align: center;
-}
-.alphabet span {
-    margin: 3px;
-    cursor: pointer;
-    display: inline-block;
-    padding: 4px 6px;
-    border-radius: 4px;
-}
-.alphabet span:hover {
-    background: #3498db;
-    color: white;
-}
-.columns {
-    column-count: 3;
-    column-gap: 20px;
-}
-.term-item {
-    background: #ecf0f1;
-    padding: 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 10px;
-    break-inside: avoid;
-    text-align: center;
-}
-.term-item:hover { background: #d0e6f7; }
-.modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
-}
-.modal-content {
-    background: white;
-    padding: 20px;
-    max-width: 600px;
-    margin: 10% auto;
-    border-radius: 8px;
-    position: relative;
-}
-.close {
-    position: absolute;
-    right: 15px;
-    top: 10px;
-    cursor: pointer;
-    font-size: 20px;
-}
-.delete-btn {
-    background: #e74c3c;
-    margin-top: 15px;
-}
-.delete-btn:hover { background: #c0392b; }
+body { font-family: Arial, sans-serif; margin:0; background:#f4f6f9; }
+header { background:#2c3e50; color:white; padding:20px; text-align:center; }
+.container { display:flex; gap:20px; width:95%; max-width:1300px; margin:20px auto; }
+.left { flex:3; }
+.right { flex:1; padding-left:20px; }
+.card { background:white; padding:20px; margin-bottom:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+input, textarea { width:100%; padding:8px; margin:8px 0; border-radius:4px; border:1px solid #ccc;}
+button { padding:8px 15px; background:#3498db; border:none; color:white; border-radius:4px; cursor:pointer;}
+button:hover { background:#2980b9; }
+.alphabet { margin-bottom:15px; text-align:center; }
+.alphabet span { margin:3px; cursor:pointer; display:inline-block; padding:4px 6px; border-radius:4px; }
+.alphabet span:hover { background:#3498db; color:white; }
+.columns { column-count:3; column-gap:20px; }
+.term-item { background:#ecf0f1; padding:8px; border-radius:4px; cursor:pointer; margin-bottom:10px; break-inside: avoid; text-align:center;}
+.term-item:hover { background:#d0e6f7; }
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5);}
+.modal-content { background:white; padding:20px; max-width:600px; margin:10% auto; border-radius:8px; position:relative;}
+.close { position:absolute; right:15px; top:10px; cursor:pointer; font-size:20px;}
 </style>
 </head>
 <body>
 
-<header>
-    <h1>Электронный глоссарий</h1>
-</header>
+<header><h1>Электронный глоссарий</h1></header>
 
 <div class="container">
+  <div class="left">
+    <div class="card">
+      <h2>Поиск</h2>
+      <input type="text" id="searchInput" placeholder="Введите термин или ключевое слово">
+      <button onclick="searchTerm()">Найти</button>
+      <button onclick="resetView()">Сброс</button>
+    </div>
 
-<div class="left">
+    <div class="card">
+      <h2>Термины</h2>
+      <div class="alphabet" id="alphabet"></div>
+      <div class="columns" id="termList"></div>
+    </div>
+  </div>
 
-<div class="card">
-<h2>Поиск</h2>
-<input type="text" id="searchInput" placeholder="Введите термин или ключевое слово">
-<button onclick="searchTerm()">Найти</button>
-<button onclick="resetView()">Сброс</button>
-</div>
-
-<div class="card">
-<h2>Термины</h2>
-<div class="alphabet" id="alphabet"></div>
-<div class="columns" id="termList"></div>
-</div>
-
-</div>
-
-<div class="right">
-<div class="card">
-<h2>Добавить термин</h2>
-<input type="text" id="title" placeholder="Название термина">
-<textarea id="description" placeholder="Описание"></textarea>
-<input type="text" id="keywords" placeholder="Ключевые слова (до 3 через запятую)">
-<button onclick="addTerm()">Добавить</button>
-</div>
-</div>
-
+  <div class="right">
+    <div class="card">
+      <h2>Добавить термин</h2>
+      <input type="text" id="title" placeholder="Название термина">
+      <textarea id="description" placeholder="Описание"></textarea>
+      <input type="text" id="keywords" placeholder="Ключевые слова (до 3 через запятую)">
+      <button onclick="addTerm()">Добавить</button>
+    </div>
+    <div class="card">
+      <h2>Скачать JSON</h2>
+      <button onclick="downloadJSON()">Скачать glossary.json</button>
+    </div>
+  </div>
 </div>
 
 <div class="modal" id="modal">
-<div class="modal-content">
-<span class="close" onclick="closeModal()">×</span>
-<h2 id="modalTitle"></h2>
-<p id="modalDescription"></p>
-<p><strong>Ключевые слова:</strong> <span id="modalKeywords"></span></p>
-<button class="delete-btn" onclick="deleteTerm()">🗑 Удалить термин</button>
-</div>
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">×</span>
+    <h2 id="modalTitle"></h2>
+    <p id="modalDescription"></p>
+    <p><strong>Ключевые слова:</strong> <span id="modalKeywords"></span></p>
+  </div>
 </div>
 
 <script>
-let glossary = [];
+let glossary = JSON.parse(localStorage.getItem("glossary")) || [];
 let currentTermIndex = null;
-
-// Ссылка на raw JSON на GitHub
-const rawGithubURL = "https://raw.githubusercontent.com/vichnya/glossaryApp/main/glossary.json";
-
-// Подгружаем данные с GitHub
-fetch(rawGithubURL)
-  .then(res => res.json())
-  .then(data => {
-      glossary = data;
-      saveAndRender();
-  })
-  .catch(err => {
-      console.error("Ошибка загрузки глоссария:", err);
-      glossary = [];
-      saveAndRender();
-  });
 
 const alphabetRu = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЭЮЯ".split("");
 const alphabetEn = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -179,25 +79,25 @@ const fullAlphabet = [...alphabetRu, ...alphabetEn];
 
 function renderAlphabet() {
     const container = document.getElementById("alphabet");
-    container.innerHTML = "";
+    container.innerHTML="";
     fullAlphabet.forEach(letter => {
         const span = document.createElement("span");
         span.textContent = letter;
-        span.onclick = () => filterByLetter(letter);
+        span.onclick=()=>filterByLetter(letter);
         container.appendChild(span);
     });
 }
 
-function addTerm() {
+function addTerm(){
     const title = document.getElementById("title").value.trim();
     const description = document.getElementById("description").value.trim();
-    let keywords = document.getElementById("keywords").value
-        .split(",").map(k=>k.trim()).filter(k=>k!=="");
+    let keywords = document.getElementById("keywords").value.split(",").map(k=>k.trim()).filter(k=>k!=="");
 
     if(!title || !description){ alert("Заполните название и описание"); return; }
     if(keywords.length>3){ alert("Не более 3 ключевых слов"); return; }
 
     glossary.push({title, description, keywords});
+    localStorage.setItem("glossary", JSON.stringify(glossary));
     saveAndRender();
 
     document.getElementById("title").value="";
@@ -205,47 +105,37 @@ function addTerm() {
     document.getElementById("keywords").value="";
 }
 
-function saveAndRender() {
+function saveAndRender(){
     glossary.sort((a,b)=>a.title.localeCompare(b.title,"ru"));
     renderTerms(glossary);
 }
 
-function renderTerms(list) {
+function renderTerms(list){
     const container = document.getElementById("termList");
-    container.innerHTML = "";
+    container.innerHTML="";
     list.forEach((term,index)=>{
         const div = document.createElement("div");
-        div.className = "term-item";
-        div.textContent = term.title;
-        div.onclick = ()=>showTerm(index);
+        div.className="term-item";
+        div.textContent=term.title;
+        div.onclick=()=>showTerm(index);
         container.appendChild(div);
     });
 }
 
-function showTerm(index) {
-    currentTermIndex = index;
-    const term = glossary[index];
-    document.getElementById("modalTitle").textContent = term.title;
-    document.getElementById("modalDescription").textContent = term.description;
-    document.getElementById("modalKeywords").textContent = term.keywords.join(", ");
-    document.getElementById("modal").style.display = "block";
+function showTerm(index){
+    currentTermIndex=index;
+    const term=glossary[index];
+    document.getElementById("modalTitle").textContent=term.title;
+    document.getElementById("modalDescription").textContent=term.description;
+    document.getElementById("modalKeywords").textContent=term.keywords.join(", ");
+    document.getElementById("modal").style.display="block";
 }
 
-function closeModal() {
-    document.getElementById("modal").style.display = "none";
-}
+function closeModal(){ document.getElementById("modal").style.display="none"; }
 
-function deleteTerm() {
-    if(confirm("Удалить термин?")) {
-        glossary.splice(currentTermIndex,1);
-        saveAndRender();
-        closeModal();
-    }
-}
-
-function searchTerm() {
-    const query = document.getElementById("searchInput").value.toLowerCase().trim();
-    const filtered = glossary.filter(term =>
+function searchTerm(){
+    const query=document.getElementById("searchInput").value.toLowerCase().trim();
+    const filtered=glossary.filter(term =>
         term.title.toLowerCase().includes(query) ||
         term.description.toLowerCase().includes(query) ||
         term.keywords.some(k=>k.toLowerCase().includes(query))
@@ -253,13 +143,24 @@ function searchTerm() {
     renderTerms(filtered);
 }
 
-function filterByLetter(letter) {
-    const filtered = glossary.filter(term=>term.title.toUpperCase().startsWith(letter));
+function filterByLetter(letter){
+    const filtered=glossary.filter(term => term.title.toUpperCase().startsWith(letter));
     renderTerms(filtered);
 }
 
-function resetView() { renderTerms(glossary); }
+function resetView(){ renderTerms(glossary); }
 
+function downloadJSON(){
+    const blob = new Blob([JSON.stringify(glossary, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "glossary.json";
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// Инициализация
 renderAlphabet();
 saveAndRender();
 </script>
